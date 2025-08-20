@@ -1,0 +1,57 @@
+# Copyright 2025 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
+kind: UDSBundle
+metadata:
+  name: uds-rke2-demo
+  description: A UDS bundle for deploying the standard UDS Core package on a development cluster
+  version: "0.1.0"
+
+packages:
+  - name: uds-rke2-prereqs
+    path: .
+    ref: 0.1.0
+
+  - name: init
+    repository: ghcr.io/zarf-dev/packages/init
+    # todo: renovate
+    ref: v0.59.0
+
+  - name: core
+    repository: ghcr.io/defenseunicorns/packages/uds/core
+    # todo: renovate
+    ref: 0.48.0-upstream
+    optionalComponents:
+      - istio-passthrough-gateway
+      - istio-egress-gateway
+    overrides:
+      pepr-uds-core:
+        module:
+          values:
+            - path: additionalIgnoredNamespaces
+              value:
+                - uds-dev-stack
+          variables:
+            - name: PEPR_WATCHER_MEMORY_REQUEST
+              description: "Memory requests for the pepr watcher pod"
+              path: "watcher.resources.requests.memory"
+              default: "256Mi"
+            - name: PEPR_ADMISSION_MEMORY_REQUEST
+              description: "Memory requests for the pepr admission pods"
+              path: "admission.resources.requests.memory"
+              default: "256Mi"
+            - name: PEPR_WATCHER_CPU_REQUEST
+              description: "CPU requests for the pepr watcher pod"
+              path: "watcher.resources.requests.cpu"
+              default: "200m"
+            - name: PEPR_ADMISSION_CPU_REQUEST
+              description: "CPU requests for the pepr admission pods"
+              path: "admission.resources.requests.cpu"
+              default: "200m"
+      keycloak:
+        keycloak:
+          values:
+            - path: env[0]
+              value:
+                name: JAVA_OPTS_KC_HEAP
+                value: "-XX:MaxRAMPercentage=70 -XX:MinRAMPercentage=70 -XX:InitialRAMPercentage=50 -XX:MaxRAM=1G"

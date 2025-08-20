@@ -1,0 +1,25 @@
+{
+  "extends": [
+    "github>defenseunicorns/uds-common//config/renovate.json5",
+    ":semanticCommits",
+    ":semanticPrefixFixDepsChoreOthers",
+    "replacements:all",
+    "workarounds:all"
+  ],
+  "packageRules": [
+    {
+      "matchFileNames": [
+        "**/zarf.yaml",
+        "**/uds-bundle.yaml"
+      ]
+    },
+    {
+      "matchFileNames": [
+        ".github/workflows/**",
+        ".github/actions/**"
+      ],
+      "groupName": "githubactions",
+      "commitMessageTopic": "githubactions"
+    }
+  ]
+}

@@ -1,0 +1,60 @@
+# Copyright 2025 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
+kind: ZarfPackageConfig
+metadata:
+  name: uds-rke2-prereqs
+  description: "UDS RKE2 Cluster Setup"
+  yolo: true
+  version: "0.1.0"
+
+variables:
+  - name: CLUSTER_NAME
+    description: "Name of the cluster"
+    default: "uds"
+
+  - name: DOMAIN
+    description: "Cluster domain"
+    default: "uds.dev"
+
+  - name: ADMIN_DOMAIN
+    description: "Domain for admin services, defaults to `admin.DOMAIN`"
+
+components:
+  - name: uds-dev-stack
+    required: true
+    description: "Install MetalLB, Minio, local-path-rwx to meet UDS developer needs without later config changes"
+    actions:
+      onDeploy:
+        before:
+          - cmd: ./zarf tools kubectl get nodes -o=jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}' | cut -d'.' -f1-3
+            description: "Load network ip base for MetalLB"
+            setVariables:
+              - name: BASE_IP
+        after:
+          - cmd: ./zarf tools kubectl rollout restart deployment rke2-coredns-rke2-coredns -n kube-system
+            description: "Restart CoreDNS to pick up internal DNS override for uds.dev"
+    charts:
+      - name: metallb
+        namespace: uds-dev-stack
+        url: https://metallb.github.io/metallb
+        version: 0.15.2
+        valuesFiles:
+          - "values/metallb-values.yaml"
+      - name: uds-dev-stack
+        namespace: uds-dev-stack
+        localPath: chart
+        version: 0.1.0
+        valuesFiles:
+          - "values/dev-stack-values.yaml"
+        variables:
+          - name: COREDNS_OVERRIDES
+            # Defaults contain rewrites of `*.uds.dev` to the UDS core Istio tenant and admin gateways
+            description: "CoreDNS overrides"
+            path: coreDnsOverrides
+      - name: minio
+        namespace: uds-dev-stack
+        version: 5.4.0
+        url: https://charts.min.io/
+        valuesFiles:
+          - "values/minio-values.yaml"

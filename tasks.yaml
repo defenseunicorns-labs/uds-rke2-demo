@@ -1,0 +1,103 @@
+# Copyright 2025 Defense Unicorns
+# SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
+
+includes:
+  - actions: https://raw.githubusercontent.com/defenseunicorns/uds-common/refs/tags/v1.17.1/tasks/actions.yaml
+  - setup: https://raw.githubusercontent.com/defenseunicorns/uds-common/refs/tags/v1.17.1/tasks/setup.yaml
+
+variables:
+  - name: ARCH
+    default: "${UDS_ARCH}"
+
+tasks:
+  - name: default
+    description: "Deploy a UDS RKE2 cluster on a fresh Lima VM (destroys previous VM instance!)"
+    actions:
+      - task: delete-lima-vm
+      - task: create-lima-vm
+      - task: install
+
+  - name: install
+    description: "Build and deploy UDS Core and its prereqs on an RKE2 cluster"
+    actions:
+      - task: build
+      - task: deploy
+
+  - name: build
+    description: "Build uds-rke2-demo bundle"
+    actions:
+      - description: "Build UDS Core prereqs"
+        task: build-prereqs
+      - description: "Build bundle"
+        cmd: "./uds create --confirm --no-progress"
+
+  - name: build-prereqs
+    description: "Build prereqs Zarf package"
+    actions:
+      - description: "Build package with RKE2 prereqs"
+        cmd: "./uds zarf p c -a ${ARCH} --confirm --no-progress --skip-sbom"
+
+  - name: create-lima-vm
+    description: "Creates Lima RKE2 VM"
+    actions:
+      - cmd: |
+          if [[ "$(uname)" == "Darwin" ]]; then
+            limactl start template://experimental/rke2 \
+              --memory 20 --cpus 10 --vm-type=vz --network=vzNAT -y
+          else
+            limactl start template://experimental/rke2 \
+              --memory 20 --cpus 10 --vm-type=qemu -y
+          fi
+  - name: deploy
+    description: "Deploys rke2-core-demo bundle"
+    actions:
+      - cmd: |
+          export KUBECONFIG=$(limactl list rke2 --format 'unix://{{.Dir}}/copied-from-guest/kubeconfig.yaml')
+          ./uds deploy uds-bundle-uds-rke2-demo-*.tar.zst --confirm
+
+  - name: print-kubeconfig-path
+    description: "Prints kubeconfig path for the RKE2 instance (Lima VM only)"
+    actions: 
+      - cmd: |
+          echo  "****** Export the following env var to connect to cluster (Lima VM only!) ****** "
+          echo export KUBECONFIG=$(limactl list rke2 --format 'unix://{{.Dir}}/copied-from-guest/kubeconfig.yaml')
+          echo "\n"
+
+  - name: delete-lima-vm
+    description: "Deletes Lima VM"
+    actions:
+      - cmd: |
+          VM_NAME="rke2"
+
+          vm_line="$(limactl list 2>/dev/null | awk -v vm="$VM_NAME" '$1==vm {print}')"
+
+          if [ -z "${vm_line}" ]; then
+            echo "VM '${VM_NAME}' does not exist."
+            exit 0
+          fi
+
+          # If the second column says Running, stop it
+          vm_status="$(echo "${vm_line}" | awk '{print $2}')"
+          if [ "${vm_status}" = "Running" ]; then
+            echo "Stopping ${VM_NAME}..."
+            limactl stop "${VM_NAME}" || true
+          fi
+
+          echo "Deleting ${VM_NAME}..."
+          limactl delete -f "${VM_NAME}" || limactl delete "${VM_NAME}"
+
+  - name: get-gw-ips
+    actions:
+      - description: Print ingress gateway IPs
+        cmd: |
+          echo "*** Admin Gateway IP ***"
+          ./uds zarf tools kubectl get svc admin-ingressgateway -n istio-admin-gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          echo "\n*** Tenant Gateway IP ***"
+          ./uds zarf tools kubectl get svc tenant-ingressgateway -n istio-tenant-gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
+          # repeat for additional gateways (ie. passthrough)
+
+  - name: clean
+    actions:
+      - description: Remove artifacts
+        cmd: |
+          rm *.tar.zst
