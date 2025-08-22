@@ -5,7 +5,7 @@ sidebar:
   order: 5
 ---
 
-This tutorial demonstrates how to deploy UDS onto a VM-based RKE2 Kubernetes cluster. This scenario is common in on-prem and airgap environments where cloud-based deployments are not feasible. The 
+This tutorial demonstrates how to deploy UDS onto a VM-based RKE2 Kubernetes cluster. This scenario is common in on-prem and airgap environments where cloud-based deployments are not feasible. 
 
 :::caution
 The deployment in this tutorial is designed specifically for development and testing environments and is *not intended for production use*.

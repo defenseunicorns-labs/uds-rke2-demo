@@ -14,12 +14,10 @@ packages:
 
   - name: init
     repository: ghcr.io/zarf-dev/packages/init
-    # todo: renovate
     ref: v0.59.0
 
   - name: core
     repository: ghcr.io/defenseunicorns/packages/uds/core
-    # todo: renovate
     ref: 0.48.0-upstream
     optionalComponents:
       - istio-passthrough-gateway
