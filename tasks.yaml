@@ -96,6 +96,14 @@ tasks:
           ./uds zarf tools kubectl get svc tenant-ingressgateway -n istio-tenant-gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
           # repeat for additional gateways (ie. passthrough)
 
+  - name: deploy-podinfo
+    actions:
+      - description: Build and deploy podinfo as an example mission app
+        dir: podinfo
+        cmd: |
+          ./uds zarf p c --confirm
+          ./uds zarf p d zarf-package-podinfo-*.tar.zst --confirm
+
   - name: clean
     actions:
       - description: Remove artifacts

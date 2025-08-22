@@ -171,3 +171,13 @@ role: /UDS Core/Admin
 ```
 
 These credentials can be used to log into any of the apps in UDS.
+
+### Integrating a Mission App
+
+UDS uses a custom `Package` resource backed by a UDS K8s controller to automatically integrate and secure mission applications with minimal configuration. An example of such a configuration for the app [PodInfo](https://github.com/stefanprodan/podinfo) exists in the [demo repo](https://github.com/defenseunicorns/uds-rke2-demo/tree/main/podinfo). It can deployed into the UDS RKE2 cluster by running the following command from the root of the repo:
+
+```
+uds run deploy-podinfo
+```
+
+For a more in-depth explanation of `Package` resources, see the [Package CR](https://uds.defenseunicorns.com/reference/configuration/custom-resources/packages-v1alpha1-cr/) reference docs and the [Integrating an Application with UDS Core](https://uds.defenseunicorns.com/tutorials/create-uds-package/) tutorial
