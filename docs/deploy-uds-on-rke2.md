@@ -40,9 +40,9 @@ fi
 
 ##### VM Requirements
 
-Aside from the system requiremenents mentioned in the prerequisites, you will need to provision a VM running a Linux instance [compatible with RKE2](https://docs.rke2.io/install/requirements#operating-systems). Additionally, this tutorial assumes the following network configuration:
+Aside from the system requirements mentioned in the prerequisites, you will need to provision a VM running a Linux instance [compatible with RKE2](https://docs.rke2.io/install/requirements#operating-systems). Additionally, this tutorial assumes the following network configuration:
 - The VM has its own IP and is accessible to the host machine by both SSH and HTTPS
-  - Recommend either a shared network or bridge setup (hypervisor port forwarding can also be useful but is often unncessary)
+  - Recommend either a shared network or bridge setup (hypervisor port forwarding can also be useful but is often unnecessary)
 - Ability to configure DNS resolution (often done by modifying `/etc/hosts`)
 
 
@@ -50,11 +50,11 @@ Aside from the system requiremenents mentioned in the prerequisites, you will ne
 
 SSH into the newly created Linux VM and follow the [official quickstart](https://docs.rke2.io/install/quickstart) to install RKE2 on the VM. Note that this is a single server node setup, no need to add agent nodes.
 
-After RKE2 is installed, ensure connectivity by running `kubectl get pods -A` and verifying that the native RKE2 pods are running. You may need to `export KUBECONFIG=/etc/rancher/rke2/rke2.yaml` (read the [official docs](https://docs.rke2.io/install/quickstart#server-node-installation)). Depending on your VM setup, it may be easier to run this command from VM itself as opposed to the host machine. If running from the host machine, you will need to ensure the Kube API (port 6443) is exposed to the host.
+After RKE2 is installed, ensure connectivity by running `kubectl get pods -A` and verifying that the native RKE2 pods are running. You may need to `export KUBECONFIG=/etc/rancher/rke2/rke2.yaml` (read the [official docs](https://docs.rke2.io/install/quickstart#server-node-installation)). Depending on your VM setup, it may be easier to run this command from the VM itself as opposed to the host machine. If running from the host machine, you will need to ensure the Kube API (port 6443) is exposed to the host.
 
 ### Bootstrapping the Cluster
 
-In order to take advantage of the myriad of capabilities UDS provides, the cluster must have the following prequisites installed:
+In order to take advantage of the myriad of capabilities UDS provides, the cluster must have the following prerequisites installed:
 
 - Default Storage Class
 - Load Balancer Controller
@@ -89,11 +89,11 @@ Loki can be configured to use other buckets or storage providers by using UDS bu
 
 #### Zarf
 
-The [zarf init](https://docs.zarf.dev/ref/init-package/#_top) package will bootstrap your cluster and make it airgap ready. This is typically included as part of the `uds-bundle.yaml` when installing UDS.
+The [zarf init](https://docs.zarf.dev/ref/init-package/#_top) package will bootstrap your cluster and make it airgap-ready. This is typically included as part of the `uds-bundle.yaml` when installing UDS.
 
 ### Installing UDS
 
-With all prequesites satisfied, UDS is ready to be installed in the cluster. You can use the [automation](https://github.com/defenseunicorns/uds-core/blob/main/src/loki/values/values.yaml#L32) in the demo repo to install UDS with a single command.
+With all prerequisites satisfied, UDS is ready to be installed in the cluster. You can use the [automation](https://github.com/defenseunicorns/uds-core/blob/main/src/loki/values/values.yaml#L32) in the demo repo to install UDS with a single command.
 
 Otherwise, a sample [uds-bundle.yaml](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/uds-bundle.yaml) is provided for reference and is partially shown below: 
 
@@ -130,14 +130,14 @@ After installing UDS Core, find the IPs of the Istio ingress gateway services. T
 uds run get-gw-ips
 ```
 
-You can also used the vendored `kubectl` to get the IPs:
+You can also use the vendored `kubectl` to get the IPs:
 ```
 # admin gateway ips (repeat for other gateways)
 uds zarf tools kubectl get svc admin-ingressgateway -n istio-admin-gateway -o jsonpath='{.status.loadBalancer.ingress[0].ip}'
 ```
 
 :::note
-It takes a moment for MetalLB to assign an IP to the ingress gateways services, so the IP may not show up right away.
+It takes a moment for MetalLB to assign IPs to the ingress gateway services, so the IP may not show up right away.
 :::
 
 After getting the IP, use `/etc/hosts` (or configure a DNS provider) to enable resolution of UDS Core app hostnames, for example:
@@ -174,10 +174,10 @@ These credentials can be used to log into any of the apps in UDS.
 
 ### Integrating a Mission App
 
-UDS uses a custom `Package` resource backed by a UDS K8s controller to automatically integrate and secure mission applications with minimal configuration. An example of such a configuration for the app [PodInfo](https://github.com/stefanprodan/podinfo) exists in the [demo repo](https://github.com/defenseunicorns/uds-rke2-demo/tree/main/podinfo). It can deployed into the UDS RKE2 cluster by running the following command from the root of the repo:
+UDS uses a custom `Package` resource backed by a UDS K8s controller to automatically integrate and secure mission applications with minimal configuration. An example of such a configuration for the app [PodInfo](https://github.com/stefanprodan/podinfo) exists in the [demo repo](https://github.com/defenseunicorns/uds-rke2-demo/tree/main/podinfo). It can be deployed into the UDS RKE2 cluster by running the following command from the root of the repo:
 
 ```
 uds run deploy-podinfo
 ```
 
-For a more in-depth explanation of `Package` resources, see the [Package CR](https://uds.defenseunicorns.com/reference/configuration/custom-resources/packages-v1alpha1-cr/) reference docs and the [Integrating an Application with UDS Core](https://uds.defenseunicorns.com/tutorials/create-uds-package/) tutorial
+For a more in-depth explanation of `Package` resources, see the [Package CR](https://uds.defenseunicorns.com/reference/configuration/custom-resources/packages-v1alpha1-cr/) reference docs and the [Integrating an Application with UDS Core](https://uds.defenseunicorns.com/tutorials/create-uds-package/) tutorial.
