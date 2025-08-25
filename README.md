@@ -2,6 +2,10 @@
 
 This repo provides configuration and automation for deploying UDS Core on RKE2 with an emphasis on on-prem installations. The code in this repo is meant to accompany the official UDS docs.
 
+### Table of Contents
+- [Quickstart (using Lima)](#quickstart-using-lima)
+- [Quickstart (RKE2 already running)](#quickstart-rke2-already-running)
+- [Further Reading](#further-reading)
 
 ## Quickstart (using Lima)
 
