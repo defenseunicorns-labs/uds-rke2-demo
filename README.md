@@ -21,7 +21,7 @@ The following requirements assume you will be running a VM locally using Lima
 - [UDS CLI](https://github.com/defenseunicorns/uds-cli/tree/main?tab=readme-ov-file#install)
 
 
-The following command runs the `default` task in the [tasks.yaml](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/tasks.yaml) file in this repo to create a Lima Ubuntu VM with an RKE2 cluster, and installs UDS Core:
+The following command runs the `default` task in the [tasks.yaml](https://github.com/defenseunicorns-labs/uds-rke2-demo/blob/main/tasks.yaml) file in this repo to create a Lima Ubuntu VM with an RKE2 cluster, and installs UDS Core:
 
 ```
 uds run

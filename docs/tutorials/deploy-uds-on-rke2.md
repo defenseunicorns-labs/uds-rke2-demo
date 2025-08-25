@@ -19,13 +19,13 @@ The deployment in this tutorial is designed specifically for development and tes
 
 ### Quickstart
 
-The fastest way to get up and running with UDS Core on RKE2 is using the automation and configuration provided in the [uds-rke2-demo](https://github.com/defenseunicorns/uds-rke2-demo) repo. Follow the instructions in the `README` to either provision a VM running RKE2 with UDS, or install UDS on an RKE2 cluster directly.
+The fastest way to get up and running with UDS Core on RKE2 is using the automation and configuration provided in the [uds-rke2-demo](https://github.com/defenseunicorns-labs/uds-rke2-demo) repo. Follow the instructions in the `README` to either provision a VM running RKE2 with UDS, or install UDS on an RKE2 cluster directly.
 
 ### Starting the VM and Installing RKE2
 
 #### Lima (recommended)
 
-Lima provides a template for quickly spinning up an Ubuntu VM running RKE2 with appropriate shared network configs, follow the instructions in [uds-rke2-demo](https://github.com/defenseunicorns/uds-rke2-demo) to quickly get up and running. The [automation](https://github.com/defenseunicorns/uds-rke2-demo/blob/303c146fffb9e6660e38902fa6ee4c8a8ca6e98d/tasks.yaml#L39) in the demo repo uses the following Lima command to provision an Ubuntu VM running RKE2:
+Lima provides a template for quickly spinning up an Ubuntu VM running RKE2 with appropriate shared network configs, follow the instructions in [uds-rke2-demo](https://github.com/defenseunicorns-labs/uds-rke2-demo) to quickly get up and running. The [automation](https://github.com/defenseunicorns-labs/uds-rke2-demo/blob/303c146fffb9e6660e38902fa6ee4c8a8ca6e98d/tasks.yaml#L39) in the demo repo uses the following Lima command to provision an Ubuntu VM running RKE2:
 ```
 if [[ "$(uname)" == "Darwin" ]]; then
   limactl start template://experimental/rke2 \
@@ -63,7 +63,7 @@ In order to take advantage of the full range of capabilities UDS provides, the c
 Each of these prereqs is covered in greater detail below.
 
 :::note
-The `uds-rke2-demo` repo contains a [zarf.yaml](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/zarf.yaml) that will install the necessary prereqs on your cluster.
+The `uds-rke2-demo` repo contains a [zarf.yaml](https://github.com/defenseunicorns-labs/uds-rke2-demo/blob/main/zarf.yaml) that will install the necessary prereqs on your cluster.
 :::
 
 #### Default Storage Class
@@ -74,16 +74,16 @@ Since RKE2 does not ship with a `default` [storage class](https://kubernetes.io/
 
 Although RKE2 ships with an NGINX ingress controller, UDS uses Istio ingress gateways to logically separate admin traffic from other types of traffic coming into the cluster. Using Istio also ensures that traffic within the cluster is encrypted and all applications are integrated into a secure service mesh. More information can be found in the [UDS service mesh](https://uds.defenseunicorns.com/reference/configuration/service-mesh/ingress/) docs.
 
-UDS ingress gateways are K8s `Services` of type `LoadBalancer`. In order to provide an IP to these load balancer services, a load balancer controller, such as [MetalLB](https://metallb.io/), must be installed. An example configuration for MetalLB can be found in the [demo repo](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/chart/templates/metallb.yaml). Note that the base IP used for the MetalLB `IPAddressPool` will come from the internal IP of the cluster nodes, and can be found with:
+UDS ingress gateways are K8s `Services` of type `LoadBalancer`. In order to provide an IP to these load balancer services, a load balancer controller, such as [MetalLB](https://metallb.io/), must be installed. An example configuration for MetalLB can be found in the [demo repo](https://github.com/defenseunicorns-labs/uds-rke2-demo/blob/main/chart/templates/metallb.yaml). Note that the base IP used for the MetalLB `IPAddressPool` will come from the internal IP of the cluster nodes, and can be found with:
 ```
 uds zarf tools kubectl get nodes -o=jsonpath='{.items[0].status.addresses[?(@.type=="InternalIP")].address}'
 ```
 
-Note the [Zarf package](https://github.com/defenseunicorns/uds-rke2-demo/blob/303c146fffb9e6660e38902fa6ee4c8a8ca6e98d/zarf.yaml#L30) in the demo repo configures this IP for you.
+Note the [Zarf package](https://github.com/defenseunicorns-labs/uds-rke2-demo/blob/303c146fffb9e6660e38902fa6ee4c8a8ca6e98d/zarf.yaml#L30) in the demo repo configures this IP for you.
 
 #### Object Store
 
-The UDS log store ([Loki](https://github.com/grafana/loki)) uses object storage to store cluster logs. For demo purposes, we recommend installing [Minio](https://github.com/minio/minio) to provide object storage. Example Helm values for Minio can be found [here](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/values/minio-values.yaml).
+The UDS log store ([Loki](https://github.com/grafana/loki)) uses object storage to store cluster logs. For demo purposes, we recommend installing [Minio](https://github.com/minio/minio) to provide object storage. Example Helm values for Minio can be found [here](https://github.com/defenseunicorns-labs/uds-rke2-demo/blob/main/values/minio-values.yaml).
 
 Loki can be configured to use other buckets or storage providers by using UDS bundle overrides to configure the UDS Loki Helm chart [values](https://github.com/defenseunicorns/uds-core/blob/main/src/loki/values/values.yaml#L32).
 
@@ -93,14 +93,14 @@ The [zarf init](https://docs.zarf.dev/ref/init-package/#_top) package will boots
 
 ### Installing UDS
 
-With all prerequisites satisfied, UDS is ready to be installed in the cluster. You can use the [automation](https://github.com/defenseunicorns/uds-rke2-demo?tab=readme-ov-file#quickstart-rke2-already-running) in the demo repo to install UDS with a single command:
+With all prerequisites satisfied, UDS is ready to be installed in the cluster. You can use the [automation](https://github.com/defenseunicorns-labs/uds-rke2-demo?tab=readme-ov-file#quickstart-rke2-already-running) in the demo repo to install UDS with a single command:
 
 ```
 uds run install
 ```
 
 
-Otherwise, a sample [uds-bundle.yaml](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/uds-bundle.yaml) is provided for reference and is partially shown below: 
+Otherwise, a sample [uds-bundle.yaml](https://github.com/defenseunicorns-labs/uds-rke2-demo/blob/main/uds-bundle.yaml) is provided for reference and is partially shown below:
 
 ```
 kind: UDSBundle
@@ -130,7 +130,7 @@ packages:
 UDS web apps are protected by Keycloak. See the "Configuring Keycloak SSO" section below to create a user for demo purposes.
 :::
 
-After installing UDS Core, find the IPs of the Istio ingress gateway services. The following command run from the root of the [demo repo](https://github.com/defenseunicorns/uds-rke2-demo) will show the ingress gateway IPs.
+After installing UDS Core, find the IPs of the Istio ingress gateway services. The following command run from the root of the [demo repo](https://github.com/defenseunicorns-labs/uds-rke2-demo) will show the ingress gateway IPs.
 ```
 uds run get-gw-ips
 ```
@@ -179,7 +179,7 @@ These credentials can be used to log into any of the apps in UDS.
 
 ### Integrating a Mission App
 
-UDS uses a custom `Package` resource backed by a UDS K8s controller to automatically integrate and secure mission applications with minimal configuration. An example of such a configuration for the app [PodInfo](https://github.com/stefanprodan/podinfo) exists in the [demo repo](https://github.com/defenseunicorns/uds-rke2-demo/tree/main/podinfo). It can be deployed into the UDS RKE2 cluster by running the following command from the root of the repo:
+UDS uses a custom `Package` resource backed by a UDS K8s controller to automatically integrate and secure mission applications with minimal configuration. An example of such a configuration for the app [PodInfo](https://github.com/stefanprodan/podinfo) exists in the [demo repo](https://github.com/defenseunicorns-labs/uds-rke2-demo/tree/main/podinfo). It can be deployed into the UDS RKE2 cluster by running the following command from the root of the repo:
 
 ```
 uds run deploy-podinfo
