@@ -54,7 +54,7 @@ After RKE2 is installed, ensure connectivity by running `kubectl get pods -A` an
 
 ### Bootstrapping the Cluster
 
-In order to take advantage of the myriad of capabilities UDS provides, the cluster must have the following prerequisites installed:
+In order to take advantage of the full range of capabilities UDS provides, the cluster must have the following prerequisites installed:
 
 - Default Storage Class
 - Load Balancer Controller
@@ -83,7 +83,7 @@ Note the [Zarf package](https://github.com/defenseunicorns/uds-rke2-demo/blob/30
 
 #### Object Store
 
-The UDS logging stack ([Loki](https://github.com/grafana/loki)) uses object storage to store cluster logs. For demo purposes, we recommend [Minio](https://github.com/minio/minio). Example Helm values for Minio can be found [here](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/values/minio-values.yaml). 
+The UDS log store ([Loki](https://github.com/grafana/loki)) uses object storage to store cluster logs. For demo purposes, we recommend installing [Minio](https://github.com/minio/minio) to provide object storage. Example Helm values for Minio can be found [here](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/values/minio-values.yaml).
 
 Loki can be configured to use other buckets or storage providers by using UDS bundle overrides to configure the UDS Loki Helm chart [values](https://github.com/defenseunicorns/uds-core/blob/main/src/loki/values/values.yaml#L32).
 
@@ -93,7 +93,12 @@ The [zarf init](https://docs.zarf.dev/ref/init-package/#_top) package will boots
 
 ### Installing UDS
 
-With all prerequisites satisfied, UDS is ready to be installed in the cluster. You can use the [automation](https://github.com/defenseunicorns/uds-core/blob/main/src/loki/values/values.yaml#L32) in the demo repo to install UDS with a single command.
+With all prerequisites satisfied, UDS is ready to be installed in the cluster. You can use the [automation](https://github.com/defenseunicorns/uds-rke2-demo?tab=readme-ov-file#quickstart-rke2-already-running) in the demo repo to install UDS with a single command:
+
+```
+uds run install
+```
+
 
 Otherwise, a sample [uds-bundle.yaml](https://github.com/defenseunicorns/uds-rke2-demo/blob/main/uds-bundle.yaml) is provided for reference and is partially shown below: 
 
@@ -145,10 +150,10 @@ After getting the IP, use `/etc/hosts` (or configure a DNS provider) to enable r
 # /etc/hosts
 
 ...
-# admin services
+# admin apps use the admin-ingressgateway IP
 192.168.64.200 keycloak.admin.uds.dev grafana.admin.uds.dev neuvector.admin.uds.dev
 
-# tenant services
+# tenant apps use the tenant-ingressgateway IP
 192.168.64.201 sso.uds.dev podinfo.uds.dev
 
 ```
