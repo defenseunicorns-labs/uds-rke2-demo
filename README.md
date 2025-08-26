@@ -1,6 +1,9 @@
 # uds-rke2-demo
 
-This repo provides configuration and automation for deploying UDS Core on RKE2 with an emphasis on on-prem installations. The code in this repo is meant to accompany the official UDS docs.
+This repo provides configuration and automation for deploying UDS Core on RKE2 with an emphasis on on-prem installations.
+
+> [!NOTE]
+> The `docs` in this repo are used in the [official UDS docs](https://uds.defenseunicorns.com/tutorials/deploy-uds-on-rke2/).
 
 ### Table of Contents
 - [Quickstart (using Lima)](#quickstart-using-lima)
@@ -31,7 +34,6 @@ The following command runs the `default` task in the [tasks.yaml](https://github
 uds run
 ```
 
-
 ## Quickstart (RKE2 already running)
 
 This quickstart assumes an RKE2 cluster is running and is accessible via the CLI.
@@ -55,4 +57,4 @@ uds run install
 
 ## Further reading
 
-:construction: will eventually link to UDS docs site :construction:
+More details regarding running UDS on RKE2 can be found in the [official tutorial](https://uds.defenseunicorns.com/tutorials/deploy-uds-on-rke2/).

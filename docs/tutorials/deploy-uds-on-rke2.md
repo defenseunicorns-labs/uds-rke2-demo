@@ -37,6 +37,14 @@ else
 fi
 ```
 
+After the VM has been created and RKE2 installed, ensure connectivity by setting the `KUBECONFIG`:
+
+```
+export KUBECONFIG="$HOME"/.lima/rke2/copied-from-guest/kubeconfig.yaml
+```
+
+Then run `kubectl get pods -A` to verify that the pods are running.
+
 #### Other Hypervisors
 
 ##### VM Requirements
