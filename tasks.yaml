@@ -1,6 +1,9 @@
 # Copyright 2025 Defense Unicorns
 # SPDX-License-Identifier: AGPL-3.0-or-later OR LicenseRef-Defense-Unicorns-Commercial
 
+includes:
+  - setup: https://raw.githubusercontent.com/defenseunicorns/uds-common/refs/tags/v1.17.1/tasks/setup.yaml
+
 variables:
   - name: ARCH
     default: "${UDS_ARCH}"
