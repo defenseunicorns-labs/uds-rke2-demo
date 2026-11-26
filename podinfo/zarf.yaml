@@ -20,4 +20,4 @@ components:
         files:
           - package.yaml    
     images:
-      - ghcr.io/stefanprodan/podinfo:6.4.0
+      - ghcr.io/stefanprodan/podinfo:6.17.0
